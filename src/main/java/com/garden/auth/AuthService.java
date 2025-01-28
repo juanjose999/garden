@@ -1,4 +1,4 @@
-package com.garden.admin.service;
+package com.garden.auth;
 
 import com.garden.admin.entity.LoginRequestUser;
 import com.garden.admin.entity.MyUser;
@@ -13,45 +13,32 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminIService {
+public class AuthService {
 
-    private final AdminIRepository adminIRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final AdminIRepository adminIRepository;
 
-    @Override
-    public List<MyUser> findAll() {
-        return adminIRepository.findAll();
+
+    public Either<Map<String, String>, Map<String, String>> login(LoginRequestUser loginRequestUser) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginRequestUser.email(), loginRequestUser.password()
+        ));
+        if(authentication.isAuthenticated()) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return Either.right(Map.of("token : ", jwtService.generateToken(userDetails)));
+        }
+        return Either.left(Map.of("Error : ","Invalid credentials"));
     }
 
-    @Override
-    public MyUser findById(int id) {
-        MyUser myUser = adminIRepository.findById(id);
-        if (myUser == null) throw new RuntimeException("No se encontro el usuario");
-        return myUser;
-    }
-
-
-    @Override
     public MyUser save(MyUser myUser) {
         myUser.setPassword(passwordEncoder.encode(myUser.getPassword()));
         return adminIRepository.save(myUser);
-    }
-
-    @Override
-    public MyUser update(MyUser myUser, int id) {
-        return adminIRepository.update(myUser, id);
-    }
-
-    @Override
-    public Boolean delete(Integer id) {
-        return adminIRepository.delete(id);
     }
 
 }

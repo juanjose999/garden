@@ -1,7 +1,6 @@
 package com.garden.config;
 
 import com.garden.admin.service.AdminDetailsAuthService;
-import com.garden.jwt.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +17,14 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
-    private final JWTService jwtService;
+    private final JwtService jwtService;
     private final AdminDetailsAuthService adminDetailsAuthService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         String authHeader = request.getHeader("Authorization");
         String jwtToken = null, username = null;
 

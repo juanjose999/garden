@@ -12,7 +12,6 @@ import java.util.Map;
 public interface AdminIService {
     List<MyUser> findAll();
     MyUser findById(int id);
-    Either<Map<String, String>, Map<String, String>> login(LoginRequestUser loginRequestUser);
     MyUser save(MyUser myUser);
     MyUser update(MyUser myUser, int id);
     Boolean delete(Integer id);
