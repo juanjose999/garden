@@ -1,4 +1,4 @@
-package com.garden.auth;
+package com.garden.auth.service;
 
 import com.garden.admin.entity.LoginRequestUser;
 import com.garden.admin.entity.MyUser;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements AuthIService{
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
