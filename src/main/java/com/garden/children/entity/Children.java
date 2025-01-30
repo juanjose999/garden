@@ -20,7 +20,8 @@ public class Children {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String full_name;
+    @Column(name = "full_name")
+    private String fullName;
 
     @ManyToOne
     @JoinColumn(name = "guardian_id")
@@ -31,8 +32,8 @@ public class Children {
     @JsonManagedReference
     private Set<Payment> paymentList = new HashSet<>();
 
-    public Children(String full_name, Guardian guardian) {
-        this.full_name = full_name;
+    public Children(String fullName, Guardian guardian) {
+        this.fullName = fullName;
         this.guardian = guardian;
         this.paymentList = new HashSet<>();
     }

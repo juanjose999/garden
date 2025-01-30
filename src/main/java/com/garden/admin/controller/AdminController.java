@@ -1,16 +1,12 @@
 package com.garden.admin.controller;
 
-import com.garden.admin.entity.LoginRequestUser;
-import com.garden.admin.entity.MyUser;
 import com.garden.admin.service.AdminIService;
 import com.garden.config.JwtService;
-import io.vavr.control.Either;
+import com.garden.exception.AdminException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/admins")
@@ -26,7 +22,7 @@ public class AdminController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<?> findById(@PathVariable Integer id) {
+    public ResponseEntity<?> findById(@PathVariable Integer id) throws AdminException {
         return new ResponseEntity<>(adminIService.findById(id), HttpStatus.OK);
     }
 

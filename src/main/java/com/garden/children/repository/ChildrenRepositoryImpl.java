@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +20,13 @@ public class ChildrenRepositoryImpl implements ChildrenIRepository{
     }
 
     @Override
-    public Children findChildrenById(int id) {
-        return childrenIRepositoryJpa.findById(id).orElseThrow(() -> new RuntimeException("Child not found"));
+    public Optional<Children> findChildrenById(int id) {
+        return childrenIRepositoryJpa.findById(id);
+    }
+
+    @Override
+    public Optional<Children> findChildrenByName(String name) {
+        return Optional.empty();
     }
 
     @Override
@@ -31,11 +37,14 @@ public class ChildrenRepositoryImpl implements ChildrenIRepository{
     }
 
     @Override
-    public Children updateChildren(Children childrenUpdate, int childrenId) {
-        Children children = findChildrenById(childrenId);
-        if(childrenUpdate.getFull_name() != null) children.setFull_name(childrenUpdate.getFull_name());
-        if(childrenUpdate.getGuardian() != null) children.setGuardian(childrenUpdate.getGuardian());
-        return childrenIRepositoryJpa.save(children);
+    public Optional<Children> updateChildren(Children childrenUpdate, int childrenId) {
+        Optional<Children> children = findChildrenById(childrenId);
+        if (children.isPresent()) {
+            if(childrenUpdate.getFullName() != null) children.get().setFullName(childrenUpdate.getFullName());
+            if(childrenUpdate.getGuardian() != null) children.get().setGuardian(childrenUpdate.getGuardian());
+            return Optional.of(childrenIRepositoryJpa.save(children.get()));
+        }
+        return Optional.empty();
     }
 
     @Override

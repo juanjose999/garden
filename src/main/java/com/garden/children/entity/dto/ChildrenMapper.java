@@ -7,14 +7,14 @@ public class ChildrenMapper {
     public static ChildrenResponseDto childrenToChildrenResponseDto(Children children) {
         return ChildrenResponseDto.builder()
                 .id(children.getId())
-                .nombre(children.getFull_name())
+                .nombre(children.getFullName())
                 .paymentList(children.getPaymentList())
                 .build();
     }
 
     public static Children childrenRequestDtoToChildren(ChildrenRequestDto childrenRequestDto) {
         return Children.builder()
-                .full_name(childrenRequestDto.name())
+                .fullName(childrenRequestDto.name())
                 .build();
     }
 

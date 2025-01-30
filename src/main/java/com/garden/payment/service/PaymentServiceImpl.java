@@ -4,6 +4,7 @@ import com.garden.children.entity.Children;
 import com.garden.children.entity.dto.ChildrenResponseDto;
 import com.garden.children.repository.ChildrenIRepository;
 import com.garden.children.service.ChildrenIService;
+import com.garden.exception.ChildrenException;
 import com.garden.guardian.entity.Guardian;
 import com.garden.payment.entity.Mes;
 import com.garden.payment.entity.Payment;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +39,11 @@ public class PaymentServiceImpl implements PaymentIService{
     }
 
     @Override
-    public Either<Map<String, String>, Guardian> savePayment(PaymentRequestDto paymentRequestDto) {
-        Children nino = childrenRepository.findChildrenById(paymentRequestDto.idNino());
+    public Either<Map<String, String>, Guardian> savePayment(PaymentRequestDto paymentRequestDto) throws ChildrenException {
+        Optional<Children> findChild = childrenRepository.findChildrenById(paymentRequestDto.idNino());
+        if(findChild.isEmpty()) throw new ChildrenException("El niño no se encontro.");
+
+        Children nino = findChild.get();
         if (nino.getPaymentList().stream()
                 .anyMatch(pago -> pago.getMes_pago().equals(Mes.valueOf(paymentRequestDto.mes())))) {
             Map<String, String> error = Map.of("error", "Está pagando un mes que ya está pago, por favor corrija.");

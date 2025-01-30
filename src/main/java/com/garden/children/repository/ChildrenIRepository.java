@@ -4,11 +4,13 @@ import com.garden.children.entity.Children;
 import com.garden.guardian.entity.Guardian;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChildrenIRepository {
     List<Children> findAllChildren();
-    Children findChildrenById(int id);
+    Optional<Children> findChildrenById(int id);
+    Optional<Children> findChildrenByName(String name);
     Children saveChildren(Children children, Guardian guardian);
-    Children updateChildren(Children childrenUpdate, int childrenId);
+    Optional<Children> updateChildren(Children childrenUpdate, int childrenId);
     Boolean deleteChildren(Integer childrenId);
 }

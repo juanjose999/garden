@@ -1,34 +1,40 @@
 package com.garden.admin.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.garden.guardian.entity.Guardian;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyUser  implements UserDetails {
+@Builder
+public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String full_name;
+    @Column(unique = true, name = "full_name")
+    private String fullName;
     private String email;
     private String password;
+    @OneToMany(mappedBy = "admin")
+    @JsonIgnore
+    private Set<Guardian> guardians = new HashSet<>();
+
+    public Admin(String fullName, String email, String password) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.guardians = new HashSet<>();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

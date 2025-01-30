@@ -1,6 +1,8 @@
 package com.garden.guardian.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.garden.admin.entity.Admin;
 import com.garden.children.entity.Children;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +27,8 @@ public class Guardian {
     @OneToMany(mappedBy = "guardian", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Children> childrens = new HashSet<>();
+    @ManyToOne
+    private Admin admin;
 
     public Guardian(String full_name, String n_whasapp) {
         this.full_name = full_name;

@@ -1,10 +1,11 @@
 package com.garden.admin.repository;
 
-import com.garden.admin.entity.MyUser;
+import com.garden.admin.entity.Admin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -13,37 +14,48 @@ public class AdminRepositoryImpl implements AdminIRepository{
     private final AdminIRepositoryJpa adminIRepositoryJpa;
 
     @Override
-    public List<MyUser> findAll() {
+    public List<Admin> findAll() {
         return adminIRepositoryJpa.findAll();
     }
 
     @Override
-    public MyUser findById(int id) {
-        return adminIRepositoryJpa.findById(id).orElse(null);
+    public Optional<Admin> findById(int id) {
+        return adminIRepositoryJpa.findById(id);
     }
 
     @Override
-    public MyUser save(MyUser myUser) {
-        return adminIRepositoryJpa.save(myUser);
+    public Optional<Admin> findByEmail(String email) {
+        return Optional.ofNullable(adminIRepositoryJpa.findByEmail(email));
     }
 
     @Override
-    public MyUser update(MyUser myUser, int id) {
-        MyUser updatedMyUser = adminIRepositoryJpa.findById(id).orElse(null);
-        if (updatedMyUser != null) {
-            if(myUser.getEmail() != null) updatedMyUser.setEmail(myUser.getEmail());
-            if(myUser.getPassword() != null) updatedMyUser.setPassword(myUser.getPassword());
-            if(myUser.getFull_name() != null) updatedMyUser.setFull_name(myUser.getFull_name());
-            return adminIRepositoryJpa.save(updatedMyUser);
+    public Optional<Admin> findByUsername(String username) {
+        return Optional.ofNullable(adminIRepositoryJpa.findByFullName(username));
+    }
+
+    @Override
+    public Admin save(Admin admin) {
+        return adminIRepositoryJpa.save(admin);
+    }
+
+    @Override
+    public Optional<Admin> update(Admin admin, int id) {
+        Optional<Admin> findAdmin = adminIRepositoryJpa.findById(id);
+        if (findAdmin.isPresent()) {
+            Admin updateAdmin = findAdmin.get();
+            if(admin.getEmail() != null) updateAdmin.setEmail(admin.getEmail());
+            if(admin.getPassword() != null) updateAdmin.setPassword(admin.getPassword());
+            if(admin.getFullName() != null) updateAdmin.setFullName(admin.getFullName());
+            return Optional.of(adminIRepositoryJpa.save(updateAdmin));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Boolean delete(Integer id) {
-        MyUser myUser = adminIRepositoryJpa.findById(id).orElse(null);
-        if (myUser == null) return false;
-        adminIRepositoryJpa.delete(myUser);
+        Optional<Admin> admin = adminIRepositoryJpa.findById(id);
+        if (admin.isEmpty()) return false;
+        adminIRepositoryJpa.delete(admin.get());
         return true;
     }
 }

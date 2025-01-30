@@ -1,20 +1,19 @@
 package com.garden.admin.service;
 
-import com.garden.admin.entity.LoginRequestUser;
-import com.garden.admin.entity.MyUser;
+import com.garden.admin.entity.Admin;
+import com.garden.admin.entity.dto.AdminMapper;
+import com.garden.admin.entity.dto.AdminRequestDto;
+import com.garden.admin.entity.dto.AdminResponseDto;
 import com.garden.admin.repository.AdminIRepository;
 import com.garden.config.JwtService;
-import io.vavr.control.Either;
+import com.garden.exception.AdminException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,28 +25,45 @@ public class AdminServiceImpl implements AdminIService {
     private final JwtService jwtService;
 
     @Override
-    public List<MyUser> findAll() {
-        return adminIRepository.findAll();
+    public List<AdminResponseDto> findAll() {
+        return adminIRepository.findAll().stream().map(AdminMapper::adminToAdminResponseDto).toList();
     }
 
     @Override
-    public MyUser findById(int id) {
-        MyUser myUser = adminIRepository.findById(id);
-        if (myUser == null) throw new RuntimeException("No se encontro el usuario");
-        return myUser;
-    }
-
-
-    @Override
-    public MyUser save(MyUser myUser) {
-        myUser.setPassword(passwordEncoder.encode(myUser.getPassword()));
-        return adminIRepository.save(myUser);
+    public AdminResponseDto findById(int id) throws AdminException {
+        return adminIRepository.findById(id).map(AdminMapper::adminToAdminResponseDto).orElseThrow(() -> new AdminException("No se encontro el usuario"));
     }
 
     @Override
-    public MyUser update(MyUser myUser, int id) {
-        return adminIRepository.update(myUser, id);
+    public AdminResponseDto findByEmail(String email) throws AdminException {
+        return adminIRepository.findByEmail(email).map(AdminMapper::adminToAdminResponseDto).orElseThrow(() -> new AdminException("No se encontro el usuario"));
     }
+
+    @Override
+    public AdminResponseDto findByUsername(String username) throws AdminException {
+        return adminIRepository.findByUsername(username)
+                .map(AdminMapper::adminToAdminResponseDto).orElseThrow(() -> new AdminException("No se encontro el usuario"));
+    }
+
+    @Override
+    public AdminResponseDto save(AdminRequestDto adminRequestDto) {
+        return AdminMapper.adminToAdminResponseDto(
+                adminIRepository.save(
+                    new Admin(
+                            adminRequestDto.name(),
+                            adminRequestDto.email(),
+                            passwordEncoder.encode(adminRequestDto.password())))
+        );
+    }
+
+    @Override
+    public AdminResponseDto update(AdminRequestDto adminRequestDto, int id) throws AdminException {
+        Admin update = adminIRepository.update(AdminMapper.adminResponseDtoToAdmin(adminRequestDto), id)
+                .orElseThrow(() -> new AdminException("No se encontró al usuario"));
+
+        return AdminMapper.adminToAdminResponseDto(update);
+    }
+
 
     @Override
     public Boolean delete(Integer id) {

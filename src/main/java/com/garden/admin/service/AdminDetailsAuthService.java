@@ -1,6 +1,6 @@
 package com.garden.admin.service;
 
-import com.garden.admin.entity.MyUser;
+import com.garden.admin.entity.Admin;
 import com.garden.admin.repository.AdminIRepositoryJpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public class AdminDetailsAuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        MyUser findUser = adminIRepositoryJpa.findByEmail(username);
+        Admin findUser = adminIRepositoryJpa.findByEmail(username);
         if (findUser == null) throw new RuntimeException("No se encontro el usuario");
         return findUser;
     }
