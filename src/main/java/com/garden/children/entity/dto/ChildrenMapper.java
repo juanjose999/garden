@@ -15,6 +15,8 @@ public class ChildrenMapper {
     public static Children childrenRequestDtoToChildren(ChildrenRequestDto childrenRequestDto) {
         return Children.builder()
                 .fullName(childrenRequestDto.name())
+                .isFemale(childrenRequestDto.isFemale())
+                .age(childrenRequestDto.age())
                 .build();
     }
 

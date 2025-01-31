@@ -22,6 +22,8 @@ public class Children {
     private int id;
     @Column(name = "full_name")
     private String fullName;
+    private boolean isFemale;
+    private int age;
 
     @ManyToOne
     @JoinColumn(name = "guardian_id")
@@ -32,8 +34,9 @@ public class Children {
     @JsonManagedReference
     private Set<Payment> paymentList = new HashSet<>();
 
-    public Children(String fullName, Guardian guardian) {
+    public Children(String fullName, boolean isFemale, Guardian guardian) {
         this.fullName = fullName;
+        this.isFemale = isFemale;
         this.guardian = guardian;
         this.paymentList = new HashSet<>();
     }
