@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class JwtService {
 
     private String secret = "";
-    private static long TIME_DURATION = TimeUnit.MINUTES.toMillis(1);
+    private static long TIME_DURATION = TimeUnit.MINUTES.toMillis(9);
     private static long TIME_DURATION_REFRESH = TimeUnit.DAYS.toMillis(8);
 
     public JwtService(){

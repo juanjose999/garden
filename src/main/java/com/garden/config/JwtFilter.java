@@ -1,6 +1,7 @@
 package com.garden.config;
 
 import com.garden.admin.service.AdminDetailsAuthService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,10 +30,18 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        if(request.getServletPath().contains("v1/auth")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Token de autorización faltante o inválido\"}");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             return;
         }
 
@@ -54,6 +63,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         }
-        throw new RuntimeException("Invalid token");
+        throw new JwtException("Invalid token");
     }
 }

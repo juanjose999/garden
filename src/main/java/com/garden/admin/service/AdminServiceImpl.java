@@ -46,7 +46,10 @@ public class AdminServiceImpl implements AdminIService {
     }
 
     @Override
-    public AdminResponseDto save(AdminRequestDto adminRequestDto) {
+    public AdminResponseDto save(AdminRequestDto adminRequestDto) throws AdminException {
+        if(adminIRepository.findByEmail(adminRequestDto.email()).isPresent()){
+            throw new AdminException("El email ya esta registrado.");
+        }
         return AdminMapper.adminToAdminResponseDto(
                 adminIRepository.save(
                     new Admin(

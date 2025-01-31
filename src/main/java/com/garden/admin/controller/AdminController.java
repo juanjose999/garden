@@ -26,6 +26,11 @@ public class AdminController {
         return new ResponseEntity<>(adminIService.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> findByEmail(@PathVariable String email) throws AdminException {
+        return new ResponseEntity<>(adminIService.findByEmail(email), HttpStatus.OK);
+    }
+
     @DeleteMapping("/id/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         Boolean deleted = adminIService.delete(id);

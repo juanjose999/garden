@@ -1,6 +1,7 @@
 package com.garden.admin.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.garden.guardian.entity.Guardian;
 import com.garden.token.entity.Token;
 import jakarta.persistence.*;
@@ -31,6 +32,7 @@ public class Admin implements UserDetails {
     private Set<Guardian> guardians = new HashSet<>();
 
     @OneToMany(mappedBy = "admin")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Token> tokens;
 
     public Admin(String fullName, String email, String password) {

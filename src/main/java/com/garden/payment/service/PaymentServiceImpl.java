@@ -6,6 +6,8 @@ import com.garden.children.repository.ChildrenIRepository;
 import com.garden.children.service.ChildrenIService;
 import com.garden.exception.ChildrenException;
 import com.garden.guardian.entity.Guardian;
+import com.garden.guardian.entity.dto.GuardianMapper;
+import com.garden.guardian.entity.dto.GuardianResponseDto;
 import com.garden.payment.entity.Mes;
 import com.garden.payment.entity.Payment;
 import com.garden.payment.entity.dto.PaymentRequestDto;
@@ -39,7 +41,7 @@ public class PaymentServiceImpl implements PaymentIService{
     }
 
     @Override
-    public Either<Map<String, String>, Guardian> savePayment(PaymentRequestDto paymentRequestDto) throws ChildrenException {
+    public Either<Map<String, String>, GuardianResponseDto> savePayment(PaymentRequestDto paymentRequestDto) throws ChildrenException {
         Optional<Children> findChild = childrenRepository.findChildrenById(paymentRequestDto.idNino());
         if(findChild.isEmpty()) throw new ChildrenException("El niño no se encontro.");
 
@@ -61,7 +63,7 @@ public class PaymentServiceImpl implements PaymentIService{
 
         nino.setPaymentList(paymentNew);
 
-        return Either.right(nino.getGuardian());
+        return Either.right(GuardianMapper.guardianToGuardianResponseDto(nino.getGuardian()));
     }
 
     @Override

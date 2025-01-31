@@ -5,6 +5,7 @@ import com.garden.children.entity.dto.ChildrenResponseDto;
 import com.garden.children.service.ChildrenIService;
 import com.garden.exception.ChildrenException;
 import com.garden.guardian.entity.Guardian;
+import com.garden.guardian.entity.dto.GuardianResponseDto;
 import com.garden.guardian.repository.GuardianIRepositoryJpa;
 import com.garden.children.repository.ChildrenIRepositoryJpa;
 import com.garden.payment.repository.PaymentIRepositoryJpa;
@@ -37,7 +38,7 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<?> createPayment(@Validated  @RequestBody PaymentRequestDto paymentRequestDto) throws ChildrenException {
-        Either<Map<String, String>, Guardian> result = paymentIService.savePayment(paymentRequestDto);
+        Either<Map<String, String>, GuardianResponseDto> result = paymentIService.savePayment(paymentRequestDto);
         if(result.isRight()){
             return ResponseEntity.ok(result.get());
         }
