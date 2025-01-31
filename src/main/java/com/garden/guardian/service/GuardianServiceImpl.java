@@ -4,6 +4,7 @@ import com.garden.admin.entity.Admin;
 import com.garden.admin.repository.AdminIRepository;
 import com.garden.admin.service.AdminIService;
 import com.garden.config.JwtService;
+import com.garden.exception.AdminException;
 import com.garden.guardian.entity.Guardian;
 import com.garden.guardian.entity.dto.GuardianMapper;
 import com.garden.guardian.entity.dto.GuardianRequestDto;
@@ -41,12 +42,19 @@ public class GuardianServiceImpl implements GuardianIService{
     }
 
     @Override
-    public GuardianResponseDto saveGuardian(GuardianRequestDto guardianRequestDto, HttpServletRequest request) {
+    public GuardianResponseDto saveGuardian(GuardianRequestDto guardianRequestDto, HttpServletRequest request) throws AdminException {
         Guardian guardian = guardianRepository.saveGuardian(
                 GuardianMapper.guardianRequestDtoToGuardian(guardianRequestDto)
         );
         String token = request.getHeader("Authorization").substring(7);
-        System.out.println(jwtService.extractUserName(token));
+        Admin admin = adminIRepository.findByEmail(jwtService.extractUserName(token))
+                .orElseThrow(() -> new AdminException("Admin not found"));
+        admin.setGuardians(guardian);
+        adminIRepository.save(admin);
+
+        guardian.setAdmin(admin);
+        guardianRepository.saveGuardian(guardian);
+
         return GuardianMapper.guardianToGuardianResponseDto(guardian);
     }
 

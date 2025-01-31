@@ -1,8 +1,8 @@
 package com.garden.admin.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.garden.guardian.entity.Guardian;
+import com.garden.token.entity.Token;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,15 +25,32 @@ public class Admin implements UserDetails {
     private String fullName;
     private String email;
     private String password;
+
     @OneToMany(mappedBy = "admin")
     @JsonIgnore
     private Set<Guardian> guardians = new HashSet<>();
+
+    @OneToMany(mappedBy = "admin")
+    private Set<Token> tokens;
 
     public Admin(String fullName, String email, String password) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.guardians = new HashSet<>();
+        this.tokens = new HashSet<>();
+    }
+
+    public void setGuardians(Guardian guardian) {
+        if(this.guardians == null) this.guardians = new HashSet<>();
+        this.guardians.add(guardian);
+    }
+
+    public void setToken(Token token) {
+        if(this.tokens == null || this.tokens.isEmpty()) {
+            this.tokens = new HashSet<>();
+        }
+        this.tokens.add(token);
     }
 
     @Override

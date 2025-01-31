@@ -1,5 +1,6 @@
 package com.garden.guardian.controller;
 
+import com.garden.exception.AdminException;
 import com.garden.exception.ChildrenException;
 import com.garden.children.entity.dto.ChildrenRequestDto;
 import com.garden.children.service.ChildrenIService;
@@ -35,7 +36,7 @@ public class GuardianController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createGuardian(@RequestBody GuardianRequestDto guardian, HttpServletRequest request) throws GuardianException {
+    public ResponseEntity<?> createGuardian(@RequestBody GuardianRequestDto guardian, HttpServletRequest request) throws GuardianException, AdminException {
         return ResponseEntity.ok(guardianService.saveGuardian(guardian, request));
     }
 
